@@ -1,21 +1,195 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "expo-status-bar";
+import { FileText, History, Settings, Sparkles } from "lucide-react-native";
+import { View } from "react-native";
+import LoginScreen from "./src/screens/LoginScreen";
+import SignupScreen from "./src/screens/SignupScreen";
+import { getCurrentUser, logout } from "./src/auth";
+import React, { useState } from "react";
 
-export default function App() {
+// Import your screens
+import DocumentsScreen from "./src/screens/DocumentsScreen";
+import HistoryScreen from "./src/screens/HistoryScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
+import SummarizeScreen from "./src/screens/SummarizeScreen";
+import SummaryResultScreen from "./src/screens/SummaryResultScreen";
+import HistoryDetailScreen from "./src/screens/HistoryDetailScreen";
+
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+// Tab Navigator Component
+function TabNavigator({ onLogout }) {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let IconComponent;
+
+          switch (route.name) {
+            case "Summarize":
+              IconComponent = Sparkles;
+              break;
+            case "Documents":
+              IconComponent = FileText;
+              break;
+            case "History":
+              IconComponent = History;
+              break;
+            case "Settings":
+              IconComponent = Settings;
+              break;
+            default:
+              IconComponent = Sparkles;
+          }
+
+          return (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingTop: 4,
+              }}
+            >
+              <IconComponent
+                size={size}
+                color={color}
+                strokeWidth={focused ? 2.5 : 2}
+              />
+            </View>
+          );
+        },
+        tabBarActiveTintColor: "#6366F1",
+        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarStyle: {
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 1,
+          borderTopColor: "#E5E7EB",
+          height: 88,
+          paddingBottom: 28,
+          paddingTop: 8,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: -2,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontFamily: "Inter-Medium",
+          marginTop: 4,
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen
+        name="Summarize"
+        component={SummarizeScreen}
+        options={{
+          tabBarLabel: "Summarize",
+        }}
+      />
+      <Tab.Screen
+        name="Documents"
+        component={DocumentsScreen}
+        options={{
+          tabBarLabel: "Documents",
+        }}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{
+          tabBarLabel: "History",
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        children={props => <SettingsScreen {...props} onLogout={onLogout} />}
+        options={{
+          tabBarLabel: "Settings",
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// Main Stack Navigator
+function RootNavigator({ onLogout }) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        cardStyle: { backgroundColor: "#F9FAFB" },
+      }}
+    >
+      <Stack.Screen name="MainTabs">
+        {props => <TabNavigator {...props} onLogout={onLogout} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="SummaryResult"
+        component={SummaryResultScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Summary Result",
+          headerStyle: {
+            backgroundColor: "#FFFFFF",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
+            elevation: 3,
+          },
+          headerTitleStyle: {
+            fontSize: 18,
+            fontFamily: "Inter-SemiBold",
+            color: "#111827",
+          },
+          headerTintColor: "#6366F1",
+          presentation: "card",
+        }}
+      />
+      <Stack.Screen name="HistoryDetail" component={HistoryDetailScreen} options={{ title: "History Details", headerShown: true }} />
+    </Stack.Navigator>
+  );
+}
+
+// Main App Component
+export default function App() {
+  const [user, setUser] = useState(getCurrentUser());
+
+  const handleAuthChange = () => {
+    setUser(getCurrentUser());
+  };
+
+  const handleLogout = () => {
+    logout();
+    setUser(null);
+  };
+
+  if (!user) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} initialParams={{ onLogin: handleAuthChange }} />
+          <Stack.Screen name="Signup" component={SignupScreen} initialParams={{ onSignup: handleAuthChange }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <StatusBar style="dark" backgroundColor="#FFFFFF" />
+      <RootNavigator onLogout={handleLogout} />
+    </NavigationContainer>
+  );
+}
