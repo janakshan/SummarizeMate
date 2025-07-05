@@ -196,7 +196,10 @@ export default function SummaryResultScreen() {
         <View style={styles.bottomActions}>
           <TouchableOpacity
             style={styles.generateAnotherButton}
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate('MainTabs', { 
+              screen: 'Summarize',
+              params: { resetInput: true }
+            })}
           >
             <ArrowLeft size={20} color="#6366F1" strokeWidth={2} />
             <Text style={styles.generateAnotherButtonText}>

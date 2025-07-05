@@ -1,6 +1,6 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { RotateCcw, Sparkles } from "lucide-react-native";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,9 +16,21 @@ import { saveToHistory } from "../storage/historyStorage";
 
 export default function SummarizeScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [summaryType, setSummaryType] = useState("brief");
+
+  // Listen for navigation focus to reset input if needed
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.resetInput) {
+        setInputText("");
+        // Clear the param to prevent repeated resets
+        navigation.setParams({ resetInput: undefined });
+      }
+    }, [route.params?.resetInput])
+  );
 
  const handleSummarize = async () => {
   if (!inputText.trim()) {
