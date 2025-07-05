@@ -8,6 +8,7 @@ let mockUsers = [
 ];
 
 let currentUser = null;
+let hasLoggedOutThisSession = false;
 
 const REMEMBER_ME_KEY = '@SummarizeMate:rememberMe';
 const STORED_CREDENTIALS_KEY = '@SummarizeMate:credentials';
@@ -61,6 +62,7 @@ export async function login({ email, password, rememberMe = false }) {
   }
   
   currentUser = user;
+  hasLoggedOutThisSession = false; // Reset logout flag on successful login
   
   // Handle remember me functionality
   try {
@@ -83,20 +85,16 @@ export async function login({ email, password, rememberMe = false }) {
 
 export async function logout() {
   currentUser = null;
-  // Clear remember me data on logout
-  try {
-    await AsyncStorage.removeItem(REMEMBER_ME_KEY);
-    await AsyncStorage.removeItem(STORED_CREDENTIALS_KEY);
-  } catch (error) {
-    console.error('Error clearing remember me data:', error);
-  }
+  hasLoggedOutThisSession = true;
+  // Don't clear remember me data on logout - keep it for next login
+  // Only clear current session, not stored credentials
 }
 
 export function getCurrentUser() {
   return currentUser;
 }
 
-// Check if user should be remembered and auto-login
+// Check if user should be remembered (for auto-login on fresh app start)
 export async function checkRememberMe() {
   try {
     const isRemembered = await AsyncStorage.getItem(REMEMBER_ME_KEY);
@@ -104,13 +102,15 @@ export async function checkRememberMe() {
       const storedCredentials = await AsyncStorage.getItem(STORED_CREDENTIALS_KEY);
       if (storedCredentials) {
         const credentials = JSON.parse(storedCredentials);
-        // Auto-login with stored credentials
-        const user = await login({ 
-          email: credentials.email, 
-          password: credentials.password, 
-          rememberMe: true 
-        });
-        return user;
+        // Only auto-login if this is a fresh app start (not after logout)
+        if (!hasLoggedOutThisSession) {
+          const user = await login({ 
+            email: credentials.email, 
+            password: credentials.password, 
+            rememberMe: true 
+          });
+          return user;
+        }
       }
     }
     return null;
@@ -119,6 +119,7 @@ export async function checkRememberMe() {
     return null;
   }
 }
+
 
 // Get stored credentials for pre-filling login form
 export async function getStoredCredentials() {
@@ -139,6 +140,17 @@ export async function getStoredCredentials() {
   } catch (error) {
     console.error('Error getting stored credentials:', error);
     return null;
+  }
+}
+
+// Function to completely clear remember me data (for security settings)
+export async function clearRememberMe() {
+  try {
+    await AsyncStorage.removeItem(REMEMBER_ME_KEY);
+    await AsyncStorage.removeItem(STORED_CREDENTIALS_KEY);
+    hasLoggedOutThisSession = true;
+  } catch (error) {
+    console.error('Error clearing remember me data:', error);
   }
 }
 
