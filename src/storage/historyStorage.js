@@ -159,8 +159,35 @@ export const clearHistory = async () => {
 
 // Helper functions
 const generateTitle = (summary) => {
-  const words = summary.split(' ').slice(0, 6);
-  return words.join(' ') + (summary.split(' ').length > 6 ? '...' : '');
+  // Remove common prefixes from mock summaries
+  let cleanSummary = summary
+    .replace(/^This text discusses\s*/i, '')
+    .replace(/^This comprehensive text\s*/i, '')
+    .replace(/^•\s*Main Topic:\s*/i, '')
+    .replace(/^The key insight is that\s*/i, '')
+    .replace(/^Overall,\s*/i, '');
+  
+  // Look for meaningful content after common sentence starters
+  const meaningfulStart = cleanSummary.match(/(?:discusses|about|focuses on|examines|explores|analyzes)\s+(.+?)(?:\.|,|$)/i);
+  if (meaningfulStart) {
+    const words = meaningfulStart[1].split(' ').slice(0, 4);
+    return words.join(' ') + (meaningfulStart[1].split(' ').length > 4 ? '...' : '');
+  }
+  
+  // Extract key phrases or capitalize first meaningful words
+  const words = cleanSummary.split(' ').slice(0, 6);
+  let title = words.join(' ');
+  
+  // If still generic, try to extract topic from the text
+  if (title.toLowerCase().includes('important information') || title.toLowerCase().includes('valuable perspective')) {
+    // Look for capitalized words that might be topics
+    const capitalWords = summary.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g);
+    if (capitalWords && capitalWords.length > 0) {
+      title = capitalWords.slice(0, 3).join(' ');
+    }
+  }
+  
+  return title + (summary.split(' ').length > 6 ? '...' : '');
 };
 
 const calculateReadTime = (text) => {

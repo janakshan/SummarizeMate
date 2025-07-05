@@ -310,31 +310,54 @@ const handleSummarizationError = async (error) => {
 }
 
   const generateMockSummary = (text, type) => {
-    const sentences = text.split(".").filter((s) => s.trim().length > 0);
+    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
     const wordCount = text.split(" ").length;
-
+    
+    // Extract key terms and topics from the text
+    const extractKeyTopics = (text) => {
+      // Look for capitalized words that might be important topics
+      const capitalWords = text.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\b/g) || [];
+      // Look for frequently mentioned words (excluding common words)
+      const commonWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
+      const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+      const wordFreq = {};
+      words.forEach(word => {
+        if (word.length > 3 && !commonWords.includes(word)) {
+          wordFreq[word] = (wordFreq[word] || 0) + 1;
+        }
+      });
+      const frequentWords = Object.entries(wordFreq)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 3)
+        .map(([word]) => word);
+      
+      return [...new Set([...capitalWords.slice(0, 2), ...frequentWords])].slice(0, 3);
+    };
+    
+    const keyTopics = extractKeyTopics(text);
+    const mainTopic = keyTopics[0] || "the main subject";
+    const firstSentence = sentences[0]?.trim() || "Primary content discussed";
+    
     switch (type) {
       case "brief":
-        return `This text discusses ${
-          sentences[0]?.trim().toLowerCase() || "the main topic"
-        }. The key insight is that ${
-          sentences[1]?.trim().toLowerCase() ||
-          "important information is presented"
-        }. Overall, the content provides valuable perspective on the subject matter.`;
+        if (keyTopics.length > 0) {
+          return `${mainTopic} is the central focus of this content. ${firstSentence.length > 100 ? firstSentence.substring(0, 100) + '...' : firstSentence}. The analysis highlights key insights and important considerations related to ${keyTopics.slice(0, 2).join(' and ')}.`;
+        }
+        return `${firstSentence.length > 150 ? firstSentence.substring(0, 150) + '...' : firstSentence}. The content explores important themes and provides valuable insights on the subject matter.`;
+        
       case "detailed":
-        return `This comprehensive text contains approximately ${wordCount} words and covers several important aspects. ${sentences
-          .slice(0, 2)
-          .join(
-            ". "
-          )}. The analysis reveals multiple layers of information that contribute to a deeper understanding of the topic. Key themes include the primary subject matter, supporting evidence, and concluding insights that tie the content together effectively.`;
+        const detailedContent = sentences.slice(0, 3).join('. ');
+        if (keyTopics.length > 0) {
+          return `This ${wordCount}-word analysis explores ${keyTopics.join(', ')} and related concepts. ${detailedContent.length > 200 ? detailedContent.substring(0, 200) + '...' : detailedContent}. The comprehensive examination reveals multiple perspectives and provides thorough coverage of the key themes and supporting evidence.`;
+        }
+        return `This comprehensive ${wordCount}-word document presents detailed analysis and insights. ${detailedContent.length > 200 ? detailedContent.substring(0, 200) + '...' : detailedContent}. The content provides thorough examination of the subject matter with supporting evidence and conclusions.`;
+        
       case "bullet":
-        return `• Main Topic: ${
-          sentences[0]?.trim() || "Primary subject discussed"
-        }\n• Key Insight: ${
-          sentences[1]?.trim() || "Supporting information provided"
-        }\n• Supporting Details: Additional context and evidence\n• Conclusion: Final thoughts and implications\n• Word Count: Approximately ${wordCount} words`;
+        const bulletContent = firstSentence.length > 80 ? firstSentence.substring(0, 80) + '...' : firstSentence;
+        return `• Primary Focus: ${mainTopic}\n• Key Content: ${bulletContent}\n• Supporting Topics: ${keyTopics.slice(1, 3).join(', ') || 'Additional themes and evidence'}\n• Analysis Depth: Comprehensive coverage with ${wordCount} words\n• Insights: Multiple perspectives and conclusions provided`;
+        
       default:
-        return "Summary generated successfully.";
+        return `${mainTopic || 'Content'} analysis completed successfully with key insights extracted.`;
     }
   };
 
