@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
-import { FileText, History, Settings, Sparkles } from "lucide-react-native";
+import { History, Settings, Sparkles } from "lucide-react-native";
 import { View } from "react-native";
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
@@ -10,7 +10,6 @@ import { getCurrentUser, logout } from "./src/auth";
 import React, { useState } from "react";
 
 // Import your screens
-import DocumentsScreen from "./src/screens/DocumentsScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import SummarizeScreen from "./src/screens/SummarizeScreen";
@@ -31,9 +30,6 @@ function TabNavigator({ onLogout }) {
           switch (route.name) {
             case "Summarize":
               IconComponent = Sparkles;
-              break;
-            case "Documents":
-              IconComponent = FileText;
               break;
             case "History":
               IconComponent = History;
@@ -92,13 +88,6 @@ function TabNavigator({ onLogout }) {
         component={SummarizeScreen}
         options={{
           tabBarLabel: "Summarize",
-        }}
-      />
-      <Tab.Screen
-        name="Documents"
-        component={DocumentsScreen}
-        options={{
-          tabBarLabel: "Documents",
         }}
       />
       <Tab.Screen
