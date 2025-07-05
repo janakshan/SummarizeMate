@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { saveToHistory } from "../storage/historyStorage";
+import { API_CONFIG, API_ENDPOINTS } from "../config/api";
 
 export default function SummarizeScreen() {
   const navigation = useNavigation();
@@ -85,10 +86,10 @@ export default function SummarizeScreen() {
       setTimeout(() => reject(new Error('Request timeout')), 15000) // 15 second timeout
     );
     
-    const fetchPromise = fetch('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', {
+    const fetchPromise = fetch(API_ENDPOINTS.BART_LARGE_CNN, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.HUGGING_FACE_API_KEY || 'your-api-key-here'}`,
+        'Authorization': `Bearer ${API_CONFIG.HUGGING_FACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -208,10 +209,10 @@ const tryAlternativeModel = async (cleanText, wordCount, emergencyFallback) => {
       setTimeout(() => reject(new Error('Alternative model timeout')), 10000) // 10 second timeout
     );
     
-    const fetchPromise = fetch('https://api-inference.huggingface.co/models/sshleifer/distilbart-cnn-12-6', {
+    const fetchPromise = fetch(API_ENDPOINTS.DISTILBART_CNN, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.HUGGING_FACE_API_KEY || 'your-api-key-here'}`,
+        'Authorization': `Bearer ${API_CONFIG.HUGGING_FACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
