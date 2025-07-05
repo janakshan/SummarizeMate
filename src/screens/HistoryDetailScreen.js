@@ -63,15 +63,15 @@ const HistoryDetailScreen = () => {
             <Text style={[styles.typeBadgeText, { color: typeInfo.color }]}>{typeInfo.label}</Text>
           </View>
         </View>
-        {/* Original Text Section */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Original Text</Text>
-          <Text style={styles.sectionText}>{item.originalText || "(Not available in mock data)"}</Text>
-        </View>
         {/* Summary Section */}
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Summary</Text>
           <Text style={styles.sectionText}>{item.summary}</Text>
+        </View>
+        {/* Original Text Section */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Original Text</Text>
+          <Text style={styles.sectionText}>{item.originalText || "(Not available in mock data)"}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

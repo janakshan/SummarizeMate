@@ -34,7 +34,7 @@ function SummarizeStack() {
         component={SummaryResultScreen}
         options={{
           headerShown: true,
-          headerTitle: "Summary Result",
+          headerTitle: "",
           headerStyle: {
             backgroundColor: "#FFFFFF",
             shadowColor: "#000",
@@ -45,11 +45,6 @@ function SummarizeStack() {
             shadowOpacity: 0.1,
             shadowRadius: 3,
             elevation: 3,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontFamily: "Inter-SemiBold",
-            color: "#111827",
           },
           headerTintColor: "#6366F1",
           presentation: "card",
@@ -73,7 +68,7 @@ function HistoryStack() {
         name="HistoryDetail" 
         component={HistoryDetailScreen} 
         options={{ 
-          title: "History Details", 
+          headerTitle: "", 
           headerShown: true,
           headerStyle: {
             backgroundColor: "#FFFFFF",
@@ -85,11 +80,6 @@ function HistoryStack() {
             shadowOpacity: 0.1,
             shadowRadius: 3,
             elevation: 3,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontFamily: "Inter-SemiBold",
-            color: "#111827",
           },
           headerTintColor: "#6366F1",
         }} 
