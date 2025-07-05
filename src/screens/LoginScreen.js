@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { login } from "../auth";
+import { login, getStoredCredentials } from "../auth";
 
 const LOGO_URL = "https://placehold.co/40x40/6366F1/fff?text=L"; // Placeholder logo
 
@@ -21,11 +21,29 @@ const LoginScreen = ({ navigation, route }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = () => {
+  // Load stored credentials on component mount
+  useEffect(() => {
+    loadStoredCredentials();
+  }, []);
+
+  const loadStoredCredentials = async () => {
+    try {
+      const storedCreds = await getStoredCredentials();
+      if (storedCreds) {
+        setEmail(storedCreds.email);
+        setPassword(storedCreds.password);
+        setRememberMe(storedCreds.rememberMe);
+      }
+    } catch (error) {
+      console.error('Error loading stored credentials:', error);
+    }
+  };
+
+  const handleLogin = async () => {
     setError("");
     setLoading(true);
     try {
-      login({ email, password });
+      await login({ email, password, rememberMe });
       setLoading(false);
       if (route?.params?.onLogin) route.params.onLogin();
     } catch (e) {

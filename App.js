@@ -6,8 +6,8 @@ import { History, Settings, Sparkles } from "lucide-react-native";
 import { View } from "react-native";
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
-import { getCurrentUser, logout } from "./src/auth";
-import React, { useState } from "react";
+import { getCurrentUser, logout, checkRememberMe } from "./src/auth";
+import React, { useState, useEffect } from "react";
 
 // Import your screens
 import HistoryScreen from "./src/screens/HistoryScreen";
@@ -197,15 +197,43 @@ function RootNavigator({ onLogout }) {
 // Main App Component
 export default function App() {
   const [user, setUser] = useState(getCurrentUser());
+  const [isCheckingRememberMe, setIsCheckingRememberMe] = useState(true);
+
+  // Check for remembered user on app startup
+  useEffect(() => {
+    checkRememberedUser();
+  }, []);
+
+  const checkRememberedUser = async () => {
+    try {
+      const rememberedUser = await checkRememberMe();
+      if (rememberedUser) {
+        setUser(rememberedUser);
+      }
+    } catch (error) {
+      console.error('Error checking remembered user:', error);
+    } finally {
+      setIsCheckingRememberMe(false);
+    }
+  };
 
   const handleAuthChange = () => {
     setUser(getCurrentUser());
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setUser(null);
   };
+
+  // Show loading screen while checking remember me
+  if (isCheckingRememberMe) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB' }}>
+        <Sparkles size={48} color="#6366F1" strokeWidth={2} />
+      </View>
+    );
+  }
 
   if (!user) {
     return (
