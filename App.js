@@ -19,6 +19,85 @@ import HistoryDetailScreen from "./src/screens/HistoryDetailScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Summarize Stack Navigator
+function SummarizeStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        cardStyle: { backgroundColor: "#F9FAFB" },
+      }}
+    >
+      <Stack.Screen name="SummarizeMain" component={SummarizeScreen} />
+      <Stack.Screen
+        name="SummaryResult"
+        component={SummaryResultScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Summary Result",
+          headerStyle: {
+            backgroundColor: "#FFFFFF",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
+            elevation: 3,
+          },
+          headerTitleStyle: {
+            fontSize: 18,
+            fontFamily: "Inter-SemiBold",
+            color: "#111827",
+          },
+          headerTintColor: "#6366F1",
+          presentation: "card",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+// History Stack Navigator
+function HistoryStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        cardStyle: { backgroundColor: "#F9FAFB" },
+      }}
+    >
+      <Stack.Screen name="HistoryMain" component={HistoryScreen} />
+      <Stack.Screen 
+        name="HistoryDetail" 
+        component={HistoryDetailScreen} 
+        options={{ 
+          title: "History Details", 
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#FFFFFF",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
+            elevation: 3,
+          },
+          headerTitleStyle: {
+            fontSize: 18,
+            fontFamily: "Inter-SemiBold",
+            color: "#111827",
+          },
+          headerTintColor: "#6366F1",
+        }} 
+      />
+    </Stack.Navigator>
+  );
+}
+
 // Tab Navigator Component
 function TabNavigator({ onLogout }) {
   return (
@@ -85,14 +164,14 @@ function TabNavigator({ onLogout }) {
     >
       <Tab.Screen
         name="Summarize"
-        component={SummarizeScreen}
+        component={SummarizeStack}
         options={{
           tabBarLabel: "Summarize",
         }}
       />
       <Tab.Screen
         name="History"
-        component={HistoryScreen}
+        component={HistoryStack}
         options={{
           tabBarLabel: "History",
         }}
@@ -110,45 +189,7 @@ function TabNavigator({ onLogout }) {
 
 // Main Stack Navigator
 function RootNavigator({ onLogout }) {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyle: { backgroundColor: "#F9FAFB" },
-      }}
-    >
-      <Stack.Screen name="MainTabs">
-        {props => <TabNavigator {...props} onLogout={onLogout} />}
-      </Stack.Screen>
-      <Stack.Screen
-        name="SummaryResult"
-        component={SummaryResultScreen}
-        options={{
-          headerShown: true,
-          headerTitle: "Summary Result",
-          headerStyle: {
-            backgroundColor: "#FFFFFF",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontFamily: "Inter-SemiBold",
-            color: "#111827",
-          },
-          headerTintColor: "#6366F1",
-          presentation: "card",
-        }}
-      />
-      <Stack.Screen name="HistoryDetail" component={HistoryDetailScreen} options={{ title: "History Details", headerShown: true }} />
-    </Stack.Navigator>
-  );
+  return <TabNavigator onLogout={onLogout} />;
 }
 
 // Main App Component
