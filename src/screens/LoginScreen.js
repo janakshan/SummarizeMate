@@ -41,7 +41,7 @@ const LoginScreen = ({ navigation, route }) => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerWrap}>
           <Text style={styles.logoipsum}>SummarizeMate</Text>
-          <Text style={styles.title}>Sign in to your{"\n"}Account</Text>
+          <Text style={styles.title}>Sign in to your Account</Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Log In</Text>

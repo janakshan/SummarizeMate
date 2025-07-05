@@ -40,7 +40,7 @@ const SignupScreen = ({ navigation, route }) => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerWrap}>
           <Text style={styles.logoipsum}>SummarizeMate</Text>
-          <Text style={styles.title}>Create your{"\n"}Account</Text>
+          <Text style={styles.title}>Create your Account</Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Sign Up</Text>
