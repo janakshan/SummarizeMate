@@ -143,17 +143,17 @@ const styles = StyleSheet.create({
   logoipsum: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 32,
     marginBottom: 10,
     marginTop: 10,
   },
   title: {
     color: "#fff",
-    fontWeight: "bold",
-    fontSize: 28,
+    fontWeight: "normal",
+    fontSize: 18,
     textAlign: "center",
     marginBottom: 0,
-    lineHeight: 34,
+    lineHeight: 22,
   },
   card: {
     flex: 1,
