@@ -22,13 +22,18 @@ export default function SummarizeScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [summaryType, setSummaryType] = useState("brief");
 
-  // Listen for navigation focus to reset input if needed
+  // Listen for navigation focus to reset input when returning to screen
   useFocusEffect(
     useCallback(() => {
+      // Reset input when coming back from other screens (like SummaryResult)
+      // or when explicitly requested via resetInput parameter
       if (route.params?.resetInput) {
         setInputText("");
         // Clear the param to prevent repeated resets
         navigation.setParams({ resetInput: undefined });
+      } else {
+        // Always reset input when navigating back to this screen
+        setInputText("");
       }
     }, [route.params?.resetInput])
   );
