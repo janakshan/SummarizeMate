@@ -38,7 +38,7 @@ describe('LoginScreen', () => {
     it('renders all essential UI elements', () => {
       render(<LoginScreen navigation={mockNavigation} route={mockRoute} />);
       
-      expect(screen.getByText('Logoipsum')).toBeTruthy();
+      expect(screen.getByText('SummarizeMate')).toBeTruthy();
       expect(screen.getByText(/Sign in to your/)).toBeTruthy();
       expect(screen.getAllByText('Log In')).toHaveLength(2); // Card title and button text
       expect(screen.getByText('Email')).toBeTruthy();
@@ -239,7 +239,7 @@ describe('LoginScreen', () => {
     it('handles missing route params gracefully', () => {
       // This test just ensures the component doesn't crash with empty params
       render(<LoginScreen navigation={mockNavigation} route={mockRoute} />);
-      expect(screen.getByText('Logoipsum')).toBeTruthy();
+      expect(screen.getByText('SummarizeMate')).toBeTruthy();
     });
   });
 });
